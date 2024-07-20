@@ -4,10 +4,12 @@ from langchain_openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import FAISS
+import os
 
-
+os.environ['HTTP_PROXY'] = 'http://127.0.0.1:10810'
+os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:10810'
 def initialize_sales_bot(vector_store_dir: str="real_estates_sale"):
-    db = FAISS.load_local(vector_store_dir, OpenAIEmbeddings())
+    db = FAISS.load_local(vector_store_dir, OpenAIEmbeddings(),allow_dangerous_deserialization=True)
     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
     
     global SALES_BOT    
@@ -50,6 +52,6 @@ def launch_gradio():
 
 if __name__ == "__main__":
     # 初始化房产销售机器人
-    initialize_sales_bot()
+    initialize_sales_bot(vector_store_dir="./real_estates_sale")
     # 启动 Gradio 服务
     launch_gradio()
